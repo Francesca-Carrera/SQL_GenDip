@@ -1,20 +1,3 @@
-/* Camera con politici femminili. 
-
-- politica estera, quali paesi e personalizzazione di questi, se hanno più ricevuto o se sono stati più il paese d'origine 
-- Italia
-- paesi che non ci sono più 
-
-/* 1 FFP_send / FeministForeignPolicy_S:
-2014: Sweden
-2019: Canada, France, Mexico, Sweden
-2021: Canada, France, Libya, Luxembourg, Mexico, Spain, Sweden. */
-
-/* 1 FFP_receive / FeministForeignPolicy_S:
-2014: Sweden
-2019: Canada, France, Mexico, Sweden
-2021: Canada, France, Libya, Luxembourg, Mexico, Spain, Sweden. */
-
-*/
 
 /* Solo valori NULL:
 IN ('Saint Lucia', 'Holy See','Grenada', 'Micronesia, Federated States of', 'Faroe Islands',
