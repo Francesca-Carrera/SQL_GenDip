@@ -172,7 +172,8 @@ WHERE VW.alpcode = 'ITA'
 GROUP BY Y.year
 ORDER BY Y.year ASC;
 
--- Media percentuale della presenza di diplomatici di genere femminile in Italia.
+-- Come si classifica l'Italia per quanto riguarda la media percentuale dei membri di genere femminile, 
+-- appartenenti alla Camera Bassa.
 SELECT country_GROUP_BY, media, posizionamento
 FROM (
 		SELECT 
