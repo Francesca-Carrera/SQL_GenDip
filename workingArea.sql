@@ -18,11 +18,10 @@ USE GenDip
 
 SELECT  
 	IDENTITY(INT, 1,1) AS workingAreaID,
-	-- CAST(NULL AS tipoDiDato_nonINT) AS nomeColonna,
 	year,
 	gender,
 	title, 
-	NULL AS cname_sendID, -- DA SPIEGARE
+	NULL AS cname_sendID, 
 	cname_send,
 	ccodealp_send,
 	region_send,
