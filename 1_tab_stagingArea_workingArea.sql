@@ -114,16 +114,18 @@ SET title = TRIM(title); -- 94.509 righe
 
 Mia rivisitazione:
 1 NULL, 2 Acting ambassador, 3 Acting chargé d’affaires, 4 Ambassador, 5 Chargé d’affaires, 6 Minister, 7 Other */
-UPDATE dbo.workingArea SET title = CASE title
-											 WHEN '1' THEN '5' -- 'Chargé d’affaires'
-											 WHEN '2' THEN '6' -- 'Minister'
-											 WHEN '3' THEN '4' -- 'Ambassador'
-											 WHEN '96' THEN '3' -- 'Acting chargé d’affaires'
-											 WHEN '97' THEN '2' -- 'Acting ambassador'
-											 WHEN '98' THEN '7' -- 'Other'
-											 WHEN '99' THEN '1' -- NULL
-								   END
-WHERE title IN ('1', '2', '3', '96', '97', '98', '99'); -- 94.504 righe
+UPDATE dbo.workingArea
+SET    title = CASE title
+                 WHEN '1' THEN '5' -- 'Chargé d’affaires'
+                 WHEN '2' THEN '6' -- 'Minister'
+                 WHEN '3' THEN '4' -- 'Ambassador'
+                 WHEN '96' THEN '3' -- 'Acting chargé d’affaires'
+                 WHEN '97' THEN '2' -- 'Acting ambassador'
+                 WHEN '98' THEN '7' -- 'Other'
+                 WHEN '99' THEN '1' -- NULL
+               END
+WHERE  title IN ( '1', '2', '3', '96',
+                  '97', '98', '99' ); -- 94.504 righe
 
 -- Aggiornamento del tipo di dato.
 ALTER TABLE dbo.workingArea 
@@ -218,18 +220,20 @@ SET region_send = TRIM(region_send); -- 94.509 righe
 
 Ho scelto di seguire il modello a sette continenti: 
 1 NULL, 2 Africa, 3 Antarctica, 4 Asia, 5 Europe, 6 North America, 7 Oceania, 8 South America */
-UPDATE dbo.workingArea SET region_send = CASE region_send
-														  WHEN '0' THEN '2' -- Africa
-														  WHEN '1' THEN '4' -- Asia
-														  WHEN '2' THEN '6' -- DA: Central and North America A: North America
-														  WHEN '3' THEN '5' -- Europe
-														  WHEN '4' THEN '4' -- DA: Middle East AD: Asia
-														  WHEN '5' THEN '5' -- DA: Nordic countries AD: Europe
-														  WHEN '6' THEN '7' -- Oceania
-														  WHEN '7' THEN '8' -- South America
-														  ELSE '1' -- '9999' che sarebbe NULL, non è presente qui, ma in region_receive
-										 END
-WHERE region_send IN ('0', '1', '2', '3', '4', '5', '6', '7'); -- 94.509 righe
+UPDATE dbo.workingArea
+SET    region_send = CASE region_send
+                       WHEN '0' THEN '2' -- Africa
+                       WHEN '1' THEN '4' -- Asia
+                       WHEN '2' THEN '6' -- DA: Central and North America A: North America
+                       WHEN '3' THEN '5' -- Europe
+                       WHEN '4' THEN '4' -- DA: Middle East AD: Asia
+                       WHEN '5' THEN '5' -- DA: Nordic countries AD: Europe
+                       WHEN '6' THEN '7' -- Oceania
+                       WHEN '7' THEN '8' -- South America
+                       ELSE '1' -- '9999' per NULL, ma è presente solo in region_receive
+                     END
+WHERE  region_send IN ( '0', '1', '2', '3',
+                        '4', '5', '6', '7' ); -- 94.509 righe
 
 -- Aggiornamento del tipo di dato.
 ALTER TABLE dbo.workingArea 
@@ -342,12 +346,12 @@ WHERE PATINDEX('%[^0-9a-zA-Z ]%', ccodealp_receive) > 0
 GROUP BY ccodealp_receive;
 
 -- Identificazione del carattere non standard.
-SELECT RIGHT(ccodealp_receive, 1)		 AS LastChar, 
-	   ASCII(RIGHT(ccodealp_receive, 1)) AS LastCharAsciiCode 
-FROM dbo.workingArea 
-WHERE PATINDEX('%[^0-9a-zA-Z ]%', ccodealp_receive) > 0
-GROUP BY RIGHT(ccodealp_receive, 1), 
-		 ASCII(RIGHT(ccodealp_receive, 1));
+SELECT RIGHT(ccodealp_receive, 1)        AS LastChar,
+       ASCII(RIGHT(ccodealp_receive, 1)) AS LastCharAsciiCode
+FROM   dbo.workingarea
+WHERE  PATINDEX('%[^0-9a-zA-Z ]%', ccodealp_receive) > 0
+GROUP  BY RIGHT(ccodealp_receive, 1),
+          ASCII(RIGHT(ccodealp_receive, 1)); 
 /* OUTPUT: LastChar: ' ' - LastCharAsciiCode: 160 (no-break space).
 LastChar: restituisce l'ultimo carattere della colonna ccodealp_receive.
 LastCharAsciiCode: restituisce il codice ASCII dell'ultimo carattere della colonna ccodealp_receive. */
@@ -389,18 +393,20 @@ SET region_receive = TRIM(region_receive); -- 94.509 righe
 
 Ho scelto di seguire il modello a sette continenti: 
 1 NULL, 2 Africa, 3 Antarctica, 4 Asia, 5 Europe, 6 North America, 7 Oceania, 8 South America */
-UPDATE dbo.workingArea SET region_receive = CASE region_receive
-														  WHEN '0' THEN '2' -- Africa
-														  WHEN '1' THEN '4' -- Asia
-														  WHEN '2' THEN '6' -- DA: Central and North America A: North America
-														  WHEN '3' THEN '5' -- Europe
-														  WHEN '4' THEN '4' -- DA: Middle East AD: Asia
-														  WHEN '5' THEN '5' -- DA: Nordic countries AD: Europe
-														  WHEN '6' THEN '7' -- Oceania
-														  WHEN '7' THEN '8' -- South America
-														  ELSE '1' -- '9999' che sarebbe NULL
-											END
-WHERE region_receive IN ('0', '1', '2', '3', '4', '5', '6', '7', '9999'); -- 94.509 righe
+UPDATE dbo.workingArea
+SET    region_receive = CASE region_receive
+                          WHEN '0' THEN '2' -- Africa
+                          WHEN '1' THEN '4' -- Asia
+                          WHEN '2' THEN '6' -- DA: Central and North America A: North America
+                          WHEN '3' THEN '5' -- Europe
+                          WHEN '4' THEN '4' -- DA: Middle East AD: Asia
+                          WHEN '5' THEN '5' -- DA: Nordic countries AD: Europe
+                          WHEN '6' THEN '7' -- Oceania
+                          WHEN '7' THEN '8' -- South America
+                          ELSE '1' -- '9999' per NULL
+                        END
+WHERE  region_receive IN ( '0', '1', '2', '3',
+                           '4', '5', '6', '7', '9999' ); -- 94.509 righe
 
 -- Aggiornamento del tipo di dato.
 ALTER TABLE dbo.workingArea 
