@@ -253,7 +253,7 @@ GROUP BY FFP_send;
 
 -- Rimozione di eventuali spazi vuoti.
 UPDATE dbo.workingArea 
-	SET FFP_send = TRIM(FFP_send); -- 94.509 righe
+SET FFP_send = TRIM(FFP_send); -- 94.509 righe
 
 -- Aggiornamento del tipo di dato.
 ALTER TABLE dbo.workingArea 
