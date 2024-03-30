@@ -293,30 +293,6 @@ SELECT countryID2,
 FROM dbo.countries 
 WHERE country LIKE '%Virgin Islands%';
 -- Virgin Islands ha l'alpcode a NULL perché non è meglio specificato se sia British o Usa.
-
--- workingArea: controllo nei paesi di destinazione.
-SELECT cname_receiveID, 
-	   cname_receive, 
-	   ccodealp_receive, 
-	   region_receive
-FROM dbo.workingArea
-WHERE cname_receive LIKE '%Virgin Islands%'
-GROUP BY cname_receiveID, 
-		 cname_receive, 
-		 ccodealp_receive, 
-		 region_receive;
-
--- workingArea: controllo nei paesi d'invio.
-SELECT cname_sendID, 
-	   cname_send, 
-	   ccodealp_send, 
-	   region_send
-FROM dbo.workingArea
-WHERE cname_send LIKE '%Virgin Islands%'
-GROUP BY cname_sendID, 
-		 cname_send, 
-		 ccodealp_send, 
-		 region_send;
 ---------------------------------------
 -- 6) Yemen.
 
@@ -380,7 +356,7 @@ Nella CTE denseRank_regions utilizzo la funzione finestra DENSE_RANK() per asseg
 precedente, basato sulla ripetizioni (o non) delle regioni geografiche.
 Nella SELECT finale unisco la tabella countries con la CTE denseRank_regions, filtrando dalla stessa i paesi con i valori
 delle regioni geografiche non ripetute, che risulteranno essere quindi discordanti. */
-WITH duplicateCountries
+WITH duplicateCountries_CTE
      AS (SELECT countryID2,
                 country,
                 alpcode,
@@ -390,7 +366,7 @@ WITH duplicateCountries
                             FROM   dbo.countries
                             GROUP  BY country
                             HAVING COUNT(*) > 1)),
-     denseRank_regions
+     denseRankRegions_CTE
      AS (SELECT countryID2,
                 country,
                 alpcode,
@@ -399,14 +375,14 @@ WITH duplicateCountries
                   OVER (
                     PARTITION BY country
                     ORDER BY regionID) AS denseRank_regionID
-         FROM   duplicateCountries)
+         FROM   duplicateCountries_CTE)
 SELECT C.countryID2,
        C.country,
        C.alpcode,
 	   C.regionID,
        R.region
 FROM   dbo.countries AS C
-       LEFT JOIN denseRank_regions AS DC
+       LEFT JOIN denseRankRegions_CTE AS DC
               ON C.country = DC.country
 	   LEFT JOIN dbo.regions AS R
 			  ON C.regionID = R.regionID
@@ -472,7 +448,315 @@ WITH duplicateAlpcode
 			FROM dbo.countries
 			GROUP BY alpcode
 			HAVING COUNT(alpcode) > 1)
-SELECT C.countryID2, C.country, DA.alpcode, C.regionID
+SELECT C.countryID2, C.country, DA.alpcode
 FROM duplicateAlpcode AS DA
 LEFT JOIN dbo.countries AS C
 	ON DA.alpcode = C.alpcode
+
+----
+-- Procedure in country
+CREATE PROCEDURE usp_country_SELECT2
+			  -- userStoredProcedure_column_action
+				@country1 NVARCHAR(55),
+				@country2 NVARCHAR(55)
+AS
+	BEGIN
+		SET NOCOUNT OFF;
+		-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+		SELECT countryID2, 
+			   country, 
+			   alpcode, 
+			   regionID  
+		FROM dbo.countries 
+		WHERE country IN (@country1, @country2)
+	END;
+GO
+EXEC usp_country_SELECT2 'Azores', 'Portugal';
+
+CREATE PROCEDURE usp_country_SELECTwithLIKE
+						  -- userStoredProcedure_column_action
+    @country NVARCHAR(55)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+    SELECT countryID2,
+           country,
+           alpcode,
+           regionID
+    FROM dbo.countries
+    WHERE country LIKE '%' + @country + '%';
+END;
+GO
+EXEC usp_country_SELECTwithLIKE 'Korea';
+
+------------
+-- cname_receive
+
+CREATE PROCEDURE usp_cnameReceive_SELECT2
+			  -- userStoredProcedure_column_action
+				@cname_receive1 NVARCHAR(55),
+				@cname_receive2 NVARCHAR(55)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	SELECT cname_receiveID, 
+		   cname_receive, 
+		   ccodealp_receive, 
+		   region_receive
+	FROM dbo.workingArea
+	WHERE cname_receive IN (@cname_receive1, @cname_receive2)
+	GROUP BY cname_receiveID, 
+			 cname_receive, 
+			 ccodealp_receive, 
+			 region_receive;
+END;
+GO
+EXEC usp_cnameReceive_SELECT2 'Turkmenistan', 'Azerbaijan';
+
+CREATE PROCEDURE usp_cnameReceive_SELECTwithLIKE
+			  -- userStoredProcedure_column_action
+				 @cname_receive NVARCHAR(55)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	SELECT cname_receiveID, 
+		   cname_receive, 
+		   ccodealp_receive, 
+		   region_receive
+	FROM dbo.workingArea
+	WHERE cname_receive LIKE '%' + @cname_receive + '%'
+	GROUP BY cname_receiveID, 
+			 cname_receive, 
+			 ccodealp_receive, 
+			 region_receive;
+END;
+GO
+EXEC usp_cnameReceive_SELECTwithLIKE 'German';
+
+-- cname_send
+
+CREATE PROCEDURE usp_cnameSend_SELECT2
+			  -- userStoredProcedure_column_action
+				@cname_send1 NVARCHAR(55),
+				@cname_send2 NVARCHAR(55)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	SELECT cname_sendID, 
+		   cname_send, 
+		   ccodealp_send, 
+		   region_send
+	FROM dbo.workingArea
+	WHERE cname_send IN (@cname_send1, @cname_send2)
+	GROUP BY cname_sendID, 
+			 cname_send, 
+			 ccodealp_send, 
+			 region_send;
+END;
+GO
+EXEC usp_cnameSend_SELECT2 'Turkmenistan', 'Azerbaijan';
+
+CREATE PROCEDURE usp_cnameSend_SELECTwithLIKE
+			  -- userStoredProcedure_column_action
+				 @cname_send NVARCHAR(55)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	SELECT cname_sendID, 
+		   cname_send, 
+		   ccodealp_send, 
+		   region_send
+	FROM dbo.workingArea
+	WHERE cname_send LIKE '%' + @cname_send + '%'
+	GROUP BY cname_sendID, 
+			 cname_send, 
+			 ccodealp_send, 
+			 region_send;
+END;
+GO
+EXEC usp_cnameSend_SELECTwithLIKE 'German';
+-- Fine procedure
+---
+
+SELECT countryID2, country, alpcode, regionID
+FROM dbo.countries
+WHERE country IN ('Turkmenistan', 'Azerbaijan');
+-- DA: 232 id - Turkmenistan - AZE --> A: 233 id - TKM.
+DELETE FROM dbo.countries WHERE countryID2 = 232;
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive IN ('Turkmenistan', 'Azerbaijan')
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+UPDATE dbo.workingArea SET cname_receiveID = 233, ccodealp_receive = 'TKM' WHERE cname_receiveID = 232; -- 1 riga
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send IN ('Turkmenistan', 'Azerbaijan')
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country IN ('Belize', 'Honduras');
+-- DA: 100 id - Honduras - BLZ --> A: 101 id - HND.
+
+DELETE FROM dbo.countries WHERE countryID2 = 100;
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive IN ('Belize', 'Honduras')
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+UPDATE dbo.workingArea SET cname_receiveID = 101, ccodealp_receive = 'HND' WHERE cname_receiveID = 100; -- 1 riga
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send IN ('Belize', 'Honduras')
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country IN ('Central African Empire', 'Central African Republic');
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive IN ('Central African Empire', 'Central African Republic')
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send IN ('Central African Empire', 'Central African Republic')
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country IN ('Cyprus', 'Czechia');
+-- DA: 58 id - Czechia - CYP --> A: 59 id - CZE.
+DELETE FROM dbo.countries WHERE countryID2 = 58;
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive IN ('Cyprus', 'Czechia')
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+UPDATE dbo.workingArea SET cname_receiveID = 59, ccodealp_receive = 'CZE' WHERE cname_receiveID = 58; -- 1 riga
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send IN ('Cyprus', 'Czechia')
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country LIKE '%German%';
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive LIKE '%German%'
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send LIKE '%German%'
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country IN ('Kampuchea', 'Cambodia');
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive IN ('Kampuchea', 'Cambodia')
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send IN ('Kampuchea', 'Cambodia')
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country = 'Niue' OR country LIKE '%Korea%'
+-- DA: 166 id - Niue - PRK --> A: 165 id - NIU.
+DELETE FROM dbo.countries WHERE countryID2 = 166;
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive = 'Niue' OR cname_receive LIKE '%Korea%'
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+UPDATE dbo.workingArea SET cname_receiveID = 165, ccodealp_receive = 'NIU' WHERE cname_receiveID = 166; -- 12 righe
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send = 'Niue' OR cname_send LIKE '%Korea%'
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country LIKE '%Viet Nam%';
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive LIKE '%Viet Nam%'
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send LIKE '%Viet Nam%'
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+
+---
+
+SELECT countryID2, country, alpcode, regionID 
+FROM dbo.countries
+WHERE country LIKE 'Yemen%';
+
+-- workingArea: controllo nei paesi di destinazione
+SELECT cname_receiveID, cname_receive, ccodealp_receive, region_receive
+FROM dbo.workingArea
+WHERE cname_receive LIKE 'Yemen%'
+GROUP BY cname_receiveID, cname_receive, ccodealp_receive, region_receive;
+
+-- workingArea: controllo nei paesi d'origine
+SELECT cname_sendID, cname_send, ccodealp_send, region_send
+FROM dbo.workingArea
+WHERE cname_send LIKE 'Yemen%'
+GROUP BY cname_sendID, cname_send, ccodealp_send, region_send;
+--------------------------------------------------------------------------------------------------------------------------------------------
