@@ -373,7 +373,7 @@ SET cname_sendID = 254,
 	ccodealp_send = 'YEM' 
 WHERE cname_sendID = 255; -- 67 righe.
 --------------------------------------------------------------------------------------------------------------------------------------------
--- Correzione dei paesi con valori duplicati e regioni geografiche discordanti.
+-- Correzione delle regioni geografiche discordanti nei paesi con valori duplicati.
 
 /* Nella CTE duplicateCountries seleziono i paesi duplicati, utilizzando una sottoquery nella clausola WHERE.
 Nella CTE denseRank_regions utilizzo la funzione finestra DENSE_RANK() per assegnare un rango ai paesi duplicati identificati nella CTE
@@ -464,3 +464,15 @@ SET cname_sendID = 167,
 	region_send = 5 
 WHERE cname_sendID = 168; -- 1 riga
 --------------------------------------------------------------------------------------------------------------------------------------------
+-- Correzione dei codici alpha (a tre caratteri) duplicati.
+
+WITH duplicateAlpcode
+	AS (
+			SELECT alpcode, COUNT(alpcode) AS alpcodeCount
+			FROM dbo.countries
+			GROUP BY alpcode
+			HAVING COUNT(alpcode) > 1)
+SELECT C.countryID2, C.country, DA.alpcode, C.regionID
+FROM duplicateAlpcode AS DA
+LEFT JOIN dbo.countries AS C
+	ON DA.alpcode = C.alpcode
