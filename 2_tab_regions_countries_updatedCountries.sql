@@ -167,23 +167,23 @@ WHERE countryID2 = 15;
 -- Stored Procedure per selezionare i dettagli dei due paesi di destinazione corrispondenti ai parametri nella tab workingArea.
 CREATE PROCEDURE usp_cnameReceive_SELECT2
 			  -- userStoredProcedure_column_action
-				@cname_receive1 NVARCHAR(55),
-				@cname_receive2 NVARCHAR(55)
+				 @cname_receive1 NVARCHAR(55),
+				 @cname_receive2 NVARCHAR(55)
 AS
-BEGIN
-	SET NOCOUNT OFF;
-	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
-	SELECT cname_receiveID, 
-		   cname_receive, 
-		   ccodealp_receive, 
-		   region_receive
-	FROM dbo.workingArea
-	WHERE cname_receive IN (@cname_receive1, @cname_receive2)
-	GROUP BY cname_receiveID, 
-			 cname_receive, 
-			 ccodealp_receive, 
-			 region_receive;
-END;
+  BEGIN
+      SET NOCOUNT OFF;
+      -- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+      SELECT cname_receiveID,
+             cname_receive,
+             ccodealp_receive,
+             region_receive
+      FROM   dbo.workingArea
+      WHERE  cname_receive IN ( @cname_receive1, @cname_receive2 )
+      GROUP  BY cname_receiveID,
+                cname_receive,
+                ccodealp_receive,
+                region_receive;
+  END;
 GO
 EXEC usp_cnameReceive_SELECT2 'Azores', 'Portugal';
 
@@ -198,23 +198,23 @@ WHERE cname_receiveID = 15; -- 1 riga.
 -- Stored Procedure per selezionare i dettagli dei due paesi d'invio corrispondenti ai parametri nella tab workingArea.
 CREATE PROCEDURE usp_cnameSend_SELECT2
 			  -- userStoredProcedure_column_action
-				@cname_send1 NVARCHAR(55),
-				@cname_send2 NVARCHAR(55)
+				 @cname_send1 NVARCHAR(55),
+				 @cname_send2 NVARCHAR(55)
 AS
-BEGIN
-	SET NOCOUNT OFF;
-	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
-	SELECT cname_sendID, 
-		   cname_send, 
-		   ccodealp_send, 
-		   region_send
-	FROM dbo.workingArea
-	WHERE cname_send IN (@cname_send1, @cname_send2)
-	GROUP BY cname_sendID, 
+  BEGIN
+      SET NOCOUNT OFF;
+	  -- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	  SELECT cname_sendID, 
 			 cname_send, 
 			 ccodealp_send, 
-			 region_send;
-END;
+			 region_send
+	  FROM dbo.workingArea
+	  WHERE cname_send IN (@cname_send1, @cname_send2)
+	  GROUP BY cname_sendID, 
+			   cname_send, 
+			   ccodealp_send, 
+			   region_send;
+  END;
 GO
 EXEC usp_cnameSend_SELECT2 'Azores', 'Portugal';
 -- Aggiornamento non necessario.
@@ -223,19 +223,19 @@ EXEC usp_cnameSend_SELECT2 'Azores', 'Portugal';
 
 -- Stored Procedure per selezionare i dettagli del paese, corrispondente al parametro, nella tab countries tramite operatore LIKE.
 CREATE PROCEDURE usp_country_SELECTwithLIKE
-						  -- userStoredProcedure_column_action
-    @country NVARCHAR(55)
+			  -- userStoredProcedure_column_action
+				 @country NVARCHAR(55)
 AS
-BEGIN
-    SET NOCOUNT OFF;
-	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
-    SELECT countryID2,
-           country,
-           alpcode,
-           regionID
-    FROM dbo.countries
-    WHERE country LIKE '%' + @country + '%';
-END;
+  BEGIN
+      SET NOCOUNT OFF;
+	  -- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+      SELECT countryID2,
+             country,
+             alpcode,
+             regionID
+      FROM dbo.countries
+      WHERE country LIKE '%' + @country + '%';
+  END;
 GO
 
 -- 2) Korea.
@@ -261,20 +261,20 @@ CREATE PROCEDURE usp_cnameReceive_SELECTwithLIKE
 			  -- userStoredProcedure_column_action
 				 @cname_receive NVARCHAR(55)
 AS
-BEGIN
-	SET NOCOUNT OFF;
-	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
-	SELECT cname_receiveID, 
-		   cname_receive, 
-		   ccodealp_receive, 
-		   region_receive
-	FROM dbo.workingArea
-	WHERE cname_receive LIKE '%' + @cname_receive + '%'
-	GROUP BY cname_receiveID, 
-			 cname_receive, 
-			 ccodealp_receive, 
-			 region_receive;
-END;
+  BEGIN
+      SET NOCOUNT OFF;
+	  -- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	  SELECT cname_receiveID, 
+		     cname_receive, 
+		     ccodealp_receive, 
+		     region_receive
+	  FROM dbo.workingArea
+	  WHERE cname_receive LIKE '%' + @cname_receive + '%'
+	  GROUP BY cname_receiveID, 
+			   cname_receive, 
+			   ccodealp_receive, 
+			   region_receive;
+  END;
 GO
 EXEC usp_cnameReceive_SELECTwithLIKE 'Kosovo';
 
@@ -290,20 +290,20 @@ CREATE PROCEDURE usp_cnameSend_SELECTwithLIKE
 			  -- userStoredProcedure_column_action
 				 @cname_send NVARCHAR(55)
 AS
-BEGIN
-	SET NOCOUNT OFF;
-	-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
-	SELECT cname_sendID, 
-		   cname_send, 
-		   ccodealp_send, 
-		   region_send
-	FROM dbo.workingArea
-	WHERE cname_send LIKE '%' + @cname_send + '%'
-	GROUP BY cname_sendID, 
-			 cname_send, 
-			 ccodealp_send, 
-			 region_send;
-END;
+  BEGIN
+      SET NOCOUNT OFF;
+	  -- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+	  SELECT cname_sendID, 
+		     cname_send, 
+		     ccodealp_send, 
+		     region_send
+	  FROM dbo.workingArea
+	  WHERE cname_send LIKE '%' + @cname_send + '%'
+	  GROUP BY cname_sendID, 
+			   cname_send, 
+			   ccodealp_send, 
+			   region_send;
+  END;
 GO
 EXEC usp_cnameSend_SELECTwithLIKE 'Kosovo';
 -- Aggiornamento non necessario.
@@ -603,3 +603,69 @@ GROUP BY cname_sendID,
 		 region_send;
 -- Aggiornamento non necessario.
 --------------------------------------------------------------------------------------------------------------------------------------------
+-- Creazione e popolamento di tab updatedCountries per paragonarla a tab countries.
+
+/* Ho scaricato da Wikipedia un file con dati aggiornati sui paesi attuali con 
+nome completo, codici alpha a tre caratteri e regione geografica.
+
+Per snellire il processo ho verificato i dati sul file Excel,
+apportando le modifiche dove necessario, in modo da rendere i nomi dei paesi
+grammaticalmente identici a quelli presenti nella tabella countries.
+
+Importanzione del file CVS updatedCountry.
+	- Tasto destro su GenDip -> Attività --> Importa file flat 
+		--> nomino la tabella "updatedCountries" --> Flaggare "Consenti valori NULL".
+	-- Ho impostato manualmente column1 come VARCHAR(10) e l'ho rinominato 'updatedAlpcode'.
+	-- Ho impostato manualmente column2 come NVARCHAR(55) e l'ho rinominato 'updatedCountry'. */
+
+SELECT updatedAlpcode, 
+	   updatedCountry 
+FROM dbo.updatedCountries;
+-- Nella colonna updatedCountry sono presenti anche delle cifre numeriche 
+-- a rappresentanza delle regioni geografiche corrispondenti.
+
+-- Aggiunta colonna regionID.
+ALTER TABLE dbo.updatedCountries 
+	ADD updatedRegionID INT NULL;
+
+-- Controllo pre UPDATE
+SELECT TRIM(SUBSTRING(updatedCountry, 1, CHARINDEX(RIGHT(updatedCountry, 1),
+                                                updatedCountry) - 1)) AS country,
+       TRIM(RIGHT(updatedCountry, 1))								  AS updatedRegionID
+FROM   dbo.updatedCountries;
+
+/* TRIM:  rimuove gli spazi vuoti all'inizio e alla fine di una stringa, 
+	oppure i caratteri specificati (non solo spazi vuoti).
+
+SUBSTRING è utilizzata per estrarre una parte specifica di una stringa.
+SUBSTRING(string_expression, start, length)
+
+Per dividere una stringa basata su un delimitatore, si usano generalmente funzioni come 
+SUBSTRING, CHARINDEX, LEFT, RIGHT e LEN per ottenere i risultati desiderati.
+CHARINDEX(substring, string_expression, start_position)
+
+
+SUBSTRING viene utilizzata per estrarre una sottostringa da una stringa più grande,
+CHARINDEX può essere utilizzata per trovare la posizione di un delimitatore all'interno di una stringa. */
+
+/* CHARINDEX(RIGHT(updatedCountry, 1), updatedCountry) - 1) --> -1 viene utilizzato per estrarre la sottostringa 
+dalla posizione 1 fino alla posizione prima dell'ultimo carattere, rimarrà quindi lo spazio ' ' dopo il nome
+del paese che verrà eliminato da TRIM. */
+
+/* Rimuovere tutti gli spazi vuoti.
+SELECT REPLACE(updatedCountry, ' ', '') FROM dbo.updatedCountries; */
+
+UPDATE dbo.updatedCountries
+SET updatedCountry = TRIM(SUBSTRING(updatedCountry, 1, CHARINDEX(RIGHT(updatedCountry, 1), updatedCountry) - 1)),
+    updatedRegionID = TRIM(RIGHT(updatedCountry, 1)); -- 249 righe
+
+-- Aggiunta colonna che fungerà da PK.
+ALTER TABLE dbo.updatedCountries ADD updatedCountryID INT IDENTITY(1,1);
+
+ALTER TABLE dbo.updatedCountries ADD CONSTRAINT PK_updatedCountries PRIMARY KEY (updatedCountryID); -- PK_TargetTable
+
+-- Replico come per tab countries: se faccio solo Alpcode UNIQUE mi da errore perché più valori NULL non sono possibili.
+ALTER TABLE dbo.updatedCountries ADD CONSTRAINT UQ_updatedCountries_alpcode_country UNIQUE (updatedAlpcode, updatedCountry); 
+-- UQ_TargetTable_TargetColumn1_TargetColumn2
+
+SELECT updatedCountryID, updatedAlpcode, updatedCountry, updatedRegionID FROM dbo.updatedCountries; -- 249 righe
