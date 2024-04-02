@@ -164,6 +164,13 @@ ALTER TABLE dbo.diplomats
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- Tab targetArea: creazione e popolamento.
 
+/* La tabella targetArea rappresenta l'area di destinazione o l'obiettivo 
+dei dati trasformati e preparati per l'elaborazione successiva.  
+Contiene i dati elaborati e filtrati provenienti dalla tabella stagingArea, 
+pronti per essere analizzati e impiegati per la rappresentazione dei grafici.
+Ora i dati sono disponibili nella loro forma finale e il processo 
+ETL può considerarsi concluso. */
+
 SELECT 
 	IDENTITY(INT, 1,1) AS targetareaID,
 	Y.yearID,
@@ -196,8 +203,8 @@ FROM dbo.workingArea AS W
 						  R.countryID, 
 						  R.feministForeignPolicy); -- 94.509 righe
 
--- Collego tab diplomats con un passaggio a parte dato che 
--- non si collega a tab targetArea tramite tab workingArea.
+-- Collego la tabella diplomats direttamente a parte,
+-- poiché non è collegata alla tabella targetArea tramite la tabella workingArea.
 UPDATE T 
 SET T.diplomatID = D.diplomatID 
 FROM dbo.targetArea AS T
