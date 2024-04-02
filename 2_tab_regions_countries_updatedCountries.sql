@@ -746,8 +746,8 @@ ORDER BY C.alpcode; -- 7 righe
 
 -- Correzione di regionID non combacianti tra tab countries e updatedCountries tramite Stored Procedure.
 CREATE PROCEDURE usp_regionID_UPDATE
-			@new_regionID INT,
-			@current_countryID INT
+				 @new_regionID INT,
+				 @current_countryID INT
 AS
 	BEGIN
 		SET NOCOUNT OFF;
@@ -834,8 +834,8 @@ GROUP BY cname_receiveID,
 ORDER BY ccodealp_receive;
 
 CREATE PROCEDURE usp_regionReceive_UPDATE
-			@new_regionReceive INT,
-			@current_cnameReceiveID INT
+				 @new_regionReceive INT,
+				 @current_cnameReceiveID INT
 AS
 	BEGIN
 		SET NOCOUNT OFF;
@@ -915,7 +915,8 @@ FROM dbo.updatedCountries; -- 16 paesi
 				  creazione regionID come FK,
 				  creazione updatedCountryID come FK*/
 
--- Eliminazione PK e copia. Crezione nuova PK.
+-- Eliminazione potenziale PK e vice PK. 
+-- Creazione nuovo vincolo di chiave primaria.
 ALTER TABLE dbo.countries 
 	DROP COLUMN countryID; 
 
@@ -946,9 +947,8 @@ ALTER TABLE dbo.countries
 
 
 /* Tab workingArea: aggiornamento potenziali colonne FK,
-					creazione vincoli FK definitivi,
+					creazione vincoli FK definitivi. */
 
-*/
 EXEC usp_cnameSendID_UPDATE; -- 94.509 righe
 
 DROP PROCEDURE usp_cnameSendID_UPDATE;
