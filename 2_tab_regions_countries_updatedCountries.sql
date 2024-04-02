@@ -129,7 +129,7 @@ SELECT countryID2,
 FROM dbo.countries 
 WHERE country IS NULL 
 	  OR alpcode IS NULL 
-	  OR regionID IS NULL;-- 7 righe
+	  OR regionID IS NULL; -- 7 righe
 
 /* Paesi con alpcode a NULL:
 (1)15 id Azores, (2)118 id Korea, (3)121 id Kosovo, (4)212 id South Ossetia, (5)249 id Virgin Islands, (6)252 id Yemen. */
@@ -156,7 +156,9 @@ GO
 -- 1) Azores.
 
 -- Azores fa parte del Portogallo.
-EXEC usp_country_SELECT2 'Azores', 'Portugal';
+EXEC usp_country_SELECT2 
+	 'Azores', 
+	 'Portugal';
 -- DA: 15 id - Azores - NULL alpcode - 6 regionID
 	--> A: 182 id - Portugal - PRT alpcode - 5 regionID.
 
@@ -185,7 +187,9 @@ AS
                 region_receive;
   END;
 GO
-EXEC usp_cnameReceive_SELECT2 'Azores', 'Portugal';
+EXEC usp_cnameReceive_SELECT2 
+	 'Azores', 
+	 'Portugal';
 
 -- Aggiornamento del record contenente Azores nei paesi di destinazione.
 UPDATE dbo.workingArea
@@ -216,7 +220,9 @@ AS
 			   region_send;
   END;
 GO
-EXEC usp_cnameSend_SELECT2 'Azores', 'Portugal';
+EXEC usp_cnameSend_SELECT2 
+	 'Azores', 
+	 'Portugal';
 -- Aggiornamento non necessario.
 
 ---------------------------------------
@@ -239,13 +245,15 @@ AS
 GO
 
 -- 2) Korea.
-EXEC usp_country_SELECTwithLIKE 'Korea';
+EXEC usp_country_SELECTwithLIKE 
+	 'Korea';
 -- Korea ha l'alpcode a NULL perché non è meglio specificato se sia Nord o Sud.
 
 ---------------------------------------
 -- 3) Kosovo.
 
-EXEC usp_country_SELECTwithLIKE 'Kosovo';
+EXEC usp_country_SELECTwithLIKE 
+	 'Kosovo';
 /* Vi sono 2 record con country Kosovo, uno con alpcode a NULL e l'altro con XKO.
 Kosovo non ha un alpcode riconosciuto in maniera ufficiale, quindi il record con id 122 e alpcode XKO non è corretto.
 DA: 122 id - Kosovo - XKO alpcode - 5 regionID 
@@ -276,7 +284,8 @@ AS
 			   region_receive;
   END;
 GO
-EXEC usp_cnameReceive_SELECTwithLIKE 'Kosovo';
+EXEC usp_cnameReceive_SELECTwithLIKE 
+	 'Kosovo';
 
 -- Aggiornamento del record contenente Kosovo con alpcode XKO nei paesi di destinazione.
 UPDATE dbo.workingArea
@@ -305,14 +314,17 @@ AS
 			   region_send;
   END;
 GO
-EXEC usp_cnameSend_SELECTwithLIKE 'Kosovo';
+EXEC usp_cnameSend_SELECTwithLIKE 
+	 'Kosovo';
 -- Aggiornamento non necessario.
 
 ---------------------------------------
 -- 4) South Ossetia.
 
 -- South Ossetia fa ufficialmente parte della Georgia.
-EXEC usp_country_SELECT2 'South Ossetia', 'Georgia';
+EXEC usp_country_SELECT2 
+	 'South Ossetia', 
+	 'Georgia';
 -- DA: 212 id - South Ossetia - NULL alpcode - 4 regionID
 	--> A: 83 id - Georgia - GEO alpcode - 4 regionID.
 
@@ -321,7 +333,9 @@ DELETE FROM dbo.countries
 WHERE countryID2 = 212;
 
 -- workingArea: controllo nei paesi di destinazione.
-EXEC usp_cnameReceive_SELECT2 'South Ossetia', 'Georgia';
+EXEC usp_cnameReceive_SELECT2 
+	 'South Ossetia', 
+	 'Georgia';
 
 -- Aggiornamento del record contenente South Ossetia nei paesi di destinazione.
 UPDATE dbo.workingArea
@@ -331,18 +345,22 @@ SET cname_receiveID = 83,
 WHERE cname_receiveID = 212; -- 1 riga
 
 -- workingArea: controllo nei paesi d'invio.
-EXEC usp_cnameSend_SELECT2 'South Ossetia', 'Georgia';
+EXEC usp_cnameSend_SELECT2 
+	 'South Ossetia', 
+	 'Georgia';
 -- Aggiornamento non necessario.
 
 ---------------------------------------
 -- 5) Virgin Islands.
 
-EXEC usp_country_SELECTwithLIKE 'Virgin Islands';
+EXEC usp_country_SELECTwithLIKE 
+	 'Virgin Islands';
 -- Virgin Islands ha l'alpcode a NULL perché non è meglio specificato se sia British o Usa.
 ---------------------------------------
 -- 6) Yemen.
 
-EXEC usp_country_SELECTwithLIKE 'Yemen';
+EXEC usp_country_SELECTwithLIKE 
+	 'Yemen';
 /* Vi sono 5 record con country Yemen, uno di questi ha alpcode NULL.
 DA: 252 id - NULL alpcode --> 
 	A: 253 id - Yemen - YEM alpocode - 4 regionID.
@@ -358,11 +376,13 @@ DELETE FROM dbo.countries
 WHERE countryID2 IN (252, 255);
 
 -- workingArea: controllo nei paesi di destinazione.
-EXEC usp_cnameReceive_SELECTwithLIKE 'Yemen';
+EXEC usp_cnameReceive_SELECTwithLIKE 
+	 'Yemen';
 -- Aggiornamento non necessario.
 
 -- workingArea: controllo nei paesi d'invio.
-EXEC usp_cnameSend_SELECTwithLIKE 'Yemen';
+EXEC usp_cnameSend_SELECTwithLIKE 
+	 'Yemen';
 
 -- Aggiornamento dei record contenenti Yemen nei paesi di invio.
 UPDATE dbo.workingArea 
@@ -471,21 +491,23 @@ WHERE cname_sendID = 168; -- 1 riga
 /* Nella CTE duplicateAlpcode seleziono i codici presenti più di una volta.
 Nella SELECT unisco la tabella countries con la CTE duplicateAlpcode, 
 visualizzando così i dettagli dei paesi con codici alpha duplicati. */
-WITH duplicateAlpcode
+WITH duplicateAlpcode_CTE
 	 AS (SELECT alpcode, 
 				COUNT(alpcode) AS alpcodeCount
 		 FROM dbo.countries
 		 GROUP BY alpcode
 		 HAVING COUNT(alpcode) > 1)
 SELECT C.countryID2, C.country, DA.alpcode
-FROM duplicateAlpcode AS DA
+FROM duplicateAlpcode_CTE AS DA
 	 LEFT JOIN dbo.countries AS C
 		ON DA.alpcode = C.alpcode;
 ---
 
 -- 1) Correzione del codice alpha del Turkmenistan.
 
-EXEC usp_country_SELECT2 'Turkmenistan', 'Azerbaijan';
+EXEC usp_country_SELECT2 
+	 'Turkmenistan', 
+	 'Azerbaijan';
 -- DA: 232 id - Turkmenistan - AZE 
 	--> A: 233 id - TKM.
 
@@ -494,7 +516,9 @@ DELETE FROM dbo.countries
 WHERE countryID2 = 232;
 
 -- workingArea: controllo nei paesi di destinazione.
-EXEC usp_cnameReceive_SELECT2 'Turkmenistan', 'Azerbaijan';
+EXEC usp_cnameReceive_SELECT2 
+	 'Turkmenistan', 
+	 'Azerbaijan';
 
 -- Aggiornamento del record nei paesi di destinazione.
 UPDATE dbo.workingArea 
@@ -503,13 +527,17 @@ SET cname_receiveID = 233,
 WHERE cname_receiveID = 232; -- 1 riga
 
 -- workingArea: controllo nei paesi d'origine.
-EXEC usp_cnameSend_SELECT2 'Turkmenistan', 'Azerbaijan';
+EXEC usp_cnameSend_SELECT2 
+	 'Turkmenistan', 
+	 'Azerbaijan';
 -- Aggiornamento non necessario.
 
 ---
 -- 2) Correzione del codice alpha dell'Honduras.
 
-EXEC usp_country_SELECT2 'Belize', 'Honduras';
+EXEC usp_country_SELECT2 
+	 'Belize', 
+	 'Honduras';
 -- DA: 100 id - Honduras - BLZ 
 	--> A: 101 id - HND.
 
@@ -518,7 +546,9 @@ DELETE FROM dbo.countries
 WHERE countryID2 = 100;
 
 -- workingArea: controllo nei paesi di destinazione.
-EXEC usp_cnameReceive_SELECT2 'Belize', 'Honduras';
+EXEC usp_cnameReceive_SELECT2 
+	 'Belize', 
+	 'Honduras';
 
 -- Aggiornamento del record nei paesi di destinazione.
 UPDATE dbo.workingArea 
@@ -527,13 +557,17 @@ SET cname_receiveID = 101,
 WHERE cname_receiveID = 100; -- 1 riga
 
 -- workingArea: controllo nei paesi d'origine.
-EXEC usp_cnameSend_SELECT2 'Belize', 'Honduras';
+EXEC usp_cnameSend_SELECT2 
+	 'Belize', 
+	 'Honduras';
 -- Aggiornamento non necessario.
 
 ---
 -- 3) Correzione del codice alpha di Cyprus.
 
-EXEC usp_cnameReceive_SELECT2 'Cyprus', 'Czechia';
+EXEC usp_cnameReceive_SELECT2 
+	 'Cyprus', 
+	 'Czechia';
 -- DA: 58 id - Czechia - CYP 
 	--> A: 59 id - CZE.
 
@@ -542,7 +576,9 @@ DELETE FROM dbo.countries
 WHERE countryID2 = 58;
 
 -- workingArea: controllo nei paesi di destinazione.
-EXEC usp_cnameReceive_SELECT2 'Cyprus', 'Czechia';
+EXEC usp_cnameReceive_SELECT2 
+	 'Cyprus', 
+	 'Czechia';
 
 -- Aggiornamento del record nei paesi di destinazione.
 UPDATE dbo.workingArea 
@@ -551,7 +587,9 @@ SET cname_receiveID = 59,
 WHERE cname_receiveID = 58; -- 1 riga
 
 -- workingArea: controllo nei paesi d'origine.
-EXEC usp_cnameSend_SELECT2 'Cyprus', 'Czechia';
+EXEC usp_cnameSend_SELECT2 
+	 'Cyprus', 
+	 'Czechia';
 -- Aggiornamento non necessario.
 
 ---
@@ -562,7 +600,8 @@ SELECT countryID2,
 	   alpcode, 
 	   regionID 
 FROM dbo.countries
-WHERE country = 'Niue' OR country LIKE '%Korea%'
+WHERE country = 'Niue' 
+	  OR country LIKE '%Korea%'
 -- DA: 166 id - Niue - PRK 
 	--> A: 165 id - NIU.
 
@@ -612,60 +651,320 @@ Per snellire il processo ho verificato i dati sul file Excel,
 apportando le modifiche dove necessario, in modo da rendere i nomi dei paesi
 grammaticalmente identici a quelli presenti nella tabella countries.
 
-Importanzione del file CVS updatedCountry.
+Importazione del file CVS updatedCountry.
 	- Tasto destro su GenDip -> Attività --> Importa file flat 
 		--> nomino la tabella "updatedCountries" --> Flaggare "Consenti valori NULL".
 	-- Ho impostato manualmente column1 come VARCHAR(10) e l'ho rinominato 'updatedAlpcode'.
-	-- Ho impostato manualmente column2 come NVARCHAR(55) e l'ho rinominato 'updatedCountry'. */
+	-- Ho impostato manualmente column2 come NVARCHAR(55) e l'ho rinominato 'updatedCountry'. 
+	-- Ho impostato manualmente column3 come INT e l'ho rinominato 'updatedRegionID'.*/
 
 SELECT updatedAlpcode, 
-	   updatedCountry 
-FROM dbo.updatedCountries;
--- Nella colonna updatedCountry sono presenti anche delle cifre numeriche 
--- a rappresentanza delle regioni geografiche corrispondenti.
+	   updatedCountry,
+	   updatedRegionID
+FROM dbo.updatedCountries; -- 249 righe
 
--- Aggiunta colonna regionID.
+-- Aggiungo la colonna updatedCountryID  e la definisco come chiave primaria della tabella.
 ALTER TABLE dbo.updatedCountries 
-	ADD updatedRegionID INT NULL;
+	ADD updatedCountryID INT IDENTITY(1,1);
 
--- Controllo pre UPDATE
-SELECT TRIM(SUBSTRING(updatedCountry, 1, CHARINDEX(RIGHT(updatedCountry, 1),
-                                                updatedCountry) - 1)) AS country,
-       TRIM(RIGHT(updatedCountry, 1))								  AS updatedRegionID
-FROM   dbo.updatedCountries;
+ALTER TABLE dbo.updatedCountries 
+	ADD CONSTRAINT PK_updatedCountries PRIMARY KEY (updatedCountryID); 
+				-- PK_TargetTable
 
-/* TRIM:  rimuove gli spazi vuoti all'inizio e alla fine di una stringa, 
-	oppure i caratteri specificati (non solo spazi vuoti).
+-- Verifica della presenza di valori NULL.
+SELECT updatedCountryID, 
+	   updatedAlpcode, 
+	   updatedCountry, 
+	   updatedRegionID 
+FROM dbo.updatedCountries
+WHERE updatedAlpcode IS NULL
+	  OR updatedCountry IS NULL
+	  OR updatedRegionID IS NULL;
 
-SUBSTRING è utilizzata per estrarre una parte specifica di una stringa.
-SUBSTRING(string_expression, start, length)
+-- Aggiunta alle colonne del vincolo NOT NULL.
+ALTER TABLE dbo.updatedCountries 
+	ALTER COLUMN updatedAlpcode VARCHAR(10) NOT NULL;
 
-Per dividere una stringa basata su un delimitatore, si usano generalmente funzioni come 
-SUBSTRING, CHARINDEX, LEFT, RIGHT e LEN per ottenere i risultati desiderati.
-CHARINDEX(substring, string_expression, start_position)
+ALTER TABLE dbo.updatedCountries 
+	ALTER COLUMN updatedCountry NVARCHAR(55) NOT NULL;
+
+ALTER TABLE dbo.updatedCountries 
+	ALTER COLUMN updatedRegionID INT NOT NULL;
+
+-- Aggiunta del vincolo di unicità composto dalla combinazione di due colonne.
+ALTER TABLE dbo.updatedCountries 
+	ADD CONSTRAINT UQ_updatedCountries_alpcode_country UNIQUE (updatedAlpcode, updatedCountry); 
+				-- UQ_TargetTable_TargetColumn1_TargetColumn2
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- Regioni geografiche non combacianti tra tab countries e updatedCountries.
+
+/* Nella CTE unupdatedCountries seleziono, tramite EXCEPT, i paesi 
+presenti nella tab countries, ma non in updatedCountries. 
+
+Nella SELECT visualizzo i dati ottenuti dalla CTE accompagnandoli, inoltre, 
+alla regione geografica aggiornata, presente nella tab updatedCountries. */
+
+WITH unupdatedCountries_CTE 
+	 AS (SELECT country, 
+				alpcode, 
+				regionID
+		 FROM dbo.countries
+		 EXCEPT
+		 SELECT updatedCountry, 
+				updatedAlpcode, 
+				updatedRegionID 
+		 FROM dbo.updatedCountries)
+SELECT C.countryID2, 
+	   C.alpcode, 
+	   C.country, 
+	   C.regionID AS	  'wrong regionID',
+	   UC.updatedRegionID 'correct regionID'
+FROM dbo.countries AS C
+	 INNER JOIN unupdatedCountries_CTE AS CTE
+			ON C.country = CTE.country 
+	 LEFT JOIN dbo.updatedCountries AS UC
+			ON C.country = UC.updatedCountry
+WHERE UC.updatedRegionID IS NOT NULL
+ORDER BY C.alpcode; -- 7 righe
+
+/* regionID errato nella tab countries, corretto in updatedCountries:
+- 80 id - ATF - French Southern Territories - 
+	DA 2 regionID --> A: 3 regionID (Antarctic).
+- 56 id - CUW - Curaçao - 
+	DA: 8 regionID --> A: 6 regionID (North America) (NB. come Aruba e Bonaire (le Antille Olandesi)).
+- 66 id - EGY - Egypt - 
+	DA: 4 regionID: A: 2 regionID (Africa).
+- 97 id - GUY - Guyana - 
+	DA: 2 regionID --> A: 8 (South America).
+- 169 id - MNP - Northern Mariana Islands - 
+	DA: 4 regionID --> A: 7 (Oceania).
+- 180 id - PCN - Pitcairn - 
+	DA: 4 regionID --> A: 7 (Oceania).
+- 228 id - TON - Tonga - 
+	DA: 2 regionID --> A: 7 (Oceania). */
 
 
-SUBSTRING viene utilizzata per estrarre una sottostringa da una stringa più grande,
-CHARINDEX può essere utilizzata per trovare la posizione di un delimitatore all'interno di una stringa. */
+-- Correzione di regionID non combacianti tra tab countries e updatedCountries tramite Stored Procedure.
+CREATE PROCEDURE usp_regionID_UPDATE
+			@new_regionID INT,
+			@current_countryID INT
+AS
+	BEGIN
+		SET NOCOUNT OFF;
+		-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+		UPDATE dbo.countries 
+		SET regionID = @new_regionID 
+		WHERE countryID2 = @current_countryID;
+	END;
+GO
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 3, 
+	 @current_countryID = 80;
 
-/* CHARINDEX(RIGHT(updatedCountry, 1), updatedCountry) - 1) --> -1 viene utilizzato per estrarre la sottostringa 
-dalla posizione 1 fino alla posizione prima dell'ultimo carattere, rimarrà quindi lo spazio ' ' dopo il nome
-del paese che verrà eliminato da TRIM. */
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 6, 
+	 @current_countryID = 56;
 
-/* Rimuovere tutti gli spazi vuoti.
-SELECT REPLACE(updatedCountry, ' ', '') FROM dbo.updatedCountries; */
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 2, 
+	 @current_countryID = 66;
 
-UPDATE dbo.updatedCountries
-SET updatedCountry = TRIM(SUBSTRING(updatedCountry, 1, CHARINDEX(RIGHT(updatedCountry, 1), updatedCountry) - 1)),
-    updatedRegionID = TRIM(RIGHT(updatedCountry, 1)); -- 249 righe
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 8, 
+	 @current_countryID = 97;
 
--- Aggiunta colonna che fungerà da PK.
-ALTER TABLE dbo.updatedCountries ADD updatedCountryID INT IDENTITY(1,1);
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 7, 
+	 @current_countryID = 169;
 
-ALTER TABLE dbo.updatedCountries ADD CONSTRAINT PK_updatedCountries PRIMARY KEY (updatedCountryID); -- PK_TargetTable
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 7, 
+	 @current_countryID = 180;
 
--- Replico come per tab countries: se faccio solo Alpcode UNIQUE mi da errore perché più valori NULL non sono possibili.
-ALTER TABLE dbo.updatedCountries ADD CONSTRAINT UQ_updatedCountries_alpcode_country UNIQUE (updatedAlpcode, updatedCountry); 
--- UQ_TargetTable_TargetColumn1_TargetColumn2
+EXEC usp_regionID_UPDATE 
+	 @new_regionID = 7, 
+	 @current_countryID = 228;
 
-SELECT updatedCountryID, updatedAlpcode, updatedCountry, updatedRegionID FROM dbo.updatedCountries; -- 249 righe
+DROP PROCEDURE usp_regionID_UPDATE;
+
+
+-- Correzione in tab workingArea dei valori geografici errati per i paesi d'invio e di destinazione.
+
+-- Paesi d'invio.
+SELECT cname_sendID, 
+	   ccodealp_send, 
+	   cname_send, 
+	   region_send
+FROM dbo.workingArea
+WHERE cname_sendID IN (80, 56, 66, 97, 
+					   169, 180, 228)
+GROUP BY cname_sendID, 
+		 ccodealp_send, 
+		 cname_send, 
+		 region_send
+ORDER BY ccodealp_send;
+
+UPDATE dbo.workingArea 
+SET region_send = 2 
+WHERE cname_sendID = 66; 
+		   -- 1183 righe
+
+UPDATE dbo.workingArea 
+SET region_send = 8 
+WHERE cname_sendID = 97; 
+			-- 136 righe
+
+UPDATE dbo.workingArea 
+SET region_send = 7 
+WHERE cname_sendID = 228; 
+			  -- 33 righe
+
+-- Paesi di destinazione.
+SELECT cname_receiveID, 
+	   ccodealp_receive, 
+	   cname_receive, 
+	   region_receive
+FROM dbo.workingArea
+WHERE cname_receiveID IN (80, 56, 66, 97, 
+						  169, 180, 228)
+GROUP BY cname_receiveID, 
+		 ccodealp_receive, 
+		 cname_receive, 
+		 region_receive
+ORDER BY ccodealp_receive;
+
+CREATE PROCEDURE usp_regionReceive_UPDATE
+			@new_regionReceive INT,
+			@current_cnameReceiveID INT
+AS
+	BEGIN
+		SET NOCOUNT OFF;
+		-- implicito ma lo scrivo: desidero vedere il conteggio delle righe.
+		UPDATE dbo.workingArea 
+		SET region_receive = @new_regionReceive 
+		WHERE cname_receiveID = @current_cnameReceiveID;
+	END;
+GO
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 3, 
+	 @current_cnameReceiveID = 80; -- 1 riga
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 6, 
+	 @current_cnameReceiveID = 56; -- 5 righe
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 2, 
+	 @current_cnameReceiveID = 66; -- 1.088 righe
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 8, 
+	 @current_cnameReceiveID = 97; -- 234 righe
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 7, 
+	 @current_cnameReceiveID = 169; -- 2 righe
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 7, 
+	 @current_cnameReceiveID = 180; -- 2 righe
+
+EXEC usp_regionReceive_UPDATE 
+	 @new_regionReceive = 7, 
+	 @current_cnameReceiveID = 228; -- 122 righe
+
+DROP PROCEDURE usp_regionReceive_UPDATE;
+
+
+-- Paesi non più esistenti.
+SELECT country AS 'unupdatedCountry',
+	   alpcode, 
+	   regionID
+FROM dbo.countries
+WHERE country IS NOT NULL
+	  AND alpcode IS NOT NULL
+EXCEPT
+SELECT updatedCountry, 
+	   updatedAlpcode, 
+	   updatedRegionID
+FROM dbo.updatedCountries; -- 16 paesi
+
+/* 1) Paesi con alpcode a NULL:
+115 id Korea - 118 id Kosovo - 239 id Virgin Islands 
+	--> per imprecisazione geografica o alpcode non ufficialmente riconosciuto.
+
+2) Paesi non più esistenti:
+- 41 id CAF Central African Empire CAF --> dal 1976 al 1979 - OGGI: Central African Republic
+- 58 id CSK Czechoslovakia CSK --> dal 1918 al 1992 - OGGI: Czechia, Slovakia.
+- 82 id DDR German Democratic Republic --> dal 1968 al 1990 - OGGI: Germany.
+- 84 id DEU Germany, Federal Republic of --> dal 1968 al 1990 - OGGI: Germany.
+- 111 id KHM Kampuchea --> dal 1976 al 1979 - OGGI: Cambodia.
+- 194 id SCG Serbia and Montenegro --> dal 2003 al 2006 - OGGI: Serbia, Montenegro.
+- 232 id SUN USSR --> dal 1922 al 1991 - OGGI: Russian Federation.
+- 237 id VDR Viet Nam, Democratic Republic of --> dal 1955 al 1975 (North Viet Nam) - OGGI: Viet Nam.
+- 238 VNM Viet Nam, Republic of --> dal 1955 al 1975 (South Viet Nam) - OGGI: Viet Nam.
+- 243 id YEM Yemen, Arab Republic of --> dal 1962 al 1990 - OGGI: Yemen.
+- 244 id YMD Yemen, People's Democratic Republic of --> dal 1967 al 1990 - OGGI: Yemen.
+- 245 id YUG - Yugoslavia YUG - dal 1918 al 1991/1992. 
+	- OGGI: Serbia, Croazia, Macedonia, Montenegro, Slovenia, Bosnia-Erzegovina 
+	e le due province autonome serbe del Kossovo e della Vojvodina. */
+--------------------------------------------------------------------------------------------------------------------------------------------
+/* Tab countries: eliminazione countryID (simil PK) e countryID2 (vice PK),
+				  creazione colonna PK definitiva,
+				  creazione vincolo UNIQUE,
+				  creazione regionID come FK,
+				  creazione updatedCountryID come FK*/
+
+-- Eliminazione PK e copia. Crezione nuova PK.
+ALTER TABLE dbo.countries 
+	DROP COLUMN countryID; 
+
+ALTER TABLE dbo.countries 
+	DROP COLUMN countryID2;
+
+ALTER TABLE dbo.countries 
+	ADD countryID INT IDENTITY(1,1);
+
+ALTER TABLE dbo.countries 
+	ADD CONSTRAINT PK_countries PRIMARY KEY (countryID); 
+				-- PK_TargetTable
+
+-- Aggiunta del vincolo di unicità composto dalla combinazione di due colonne.
+ALTER TABLE dbo.countries 
+	ADD CONSTRAINT UQ_countries_country_alpcode UNIQUE (country, alpcode); 
+				-- UQ_TargetTable_TargetColumn1_TargetColumn2
+
+ALTER TABLE dbo.countries
+	ADD CONSTRAINT FK_countries_regions FOREIGN KEY (regionID) REFERENCES regions(regionID) 
+				-- FK_TargetTable_SourceTable
+	ON DELETE NO ACTION ON UPDATE NO ACTION; -- Implicito se non lo avessi dichiarato
+
+ALTER TABLE dbo.countries
+	ADD CONSTRAINT FK_countries_updatedCountries FOREIGN KEY (updatedCountryID) REFERENCES updatedCountries(updatedCountryID) 
+				-- FK_TargetTable_SourceTable-
+	ON DELETE NO ACTION ON UPDATE NO ACTION; -- Implicito se non lo avessi dichiarato
+
+
+/* Tab workingArea: aggiornamento potenziali colonne FK,
+					creazione vincoli FK definitivi,
+
+*/
+EXEC usp_cnameSendID_UPDATE; -- 94.509 righe
+
+DROP PROCEDURE usp_cnameSendID_UPDATE;
+
+ALTER TABLE dbo.workingArea
+	ADD CONSTRAINT FK_workingArea_sending_countries FOREIGN KEY (cname_sendID) REFERENCES countries(countryID)
+				-- FK_TargetTable_sending_SourceTable
+	ON DELETE NO ACTION ON UPDATE NO ACTION; -- Implicito se non lo avessi dichiarato
+
+
+EXECUTE usp_cnameReceiveID_UPDATE; -- 94.509 righe
+
+DROP PROCEDURE usp_cnameReceiveID_UPDATE;
+
+ALTER TABLE dbo.workingArea
+	ADD CONSTRAINT FK_workingArea_receiving_countries FOREIGN KEY (cname_receiveID) REFERENCES countries(countryID)
+				-- FK_TargetTable_receiving_SourceTable
+	ON DELETE NO ACTION ON UPDATE NO ACTION; -- Implicito se non lo avessi dichiarato
+--------------------------------------------------------------------------------------------------------------------------------------------
