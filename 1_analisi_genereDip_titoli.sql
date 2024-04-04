@@ -6,14 +6,11 @@
 	B) Rapporto di crescita di diplomatici, per genere, del 2021 rispetto al 1968.
 	C) Crescita percentuale maggiore di diplomatici di genere maschile.
 
-2) Paesi con più diplomatici di genere femminile per anno e (8) in assoluto.
-	A)Paese con più diplomatici di genere femminile in un singolo anno.
-	B) Continenti con più diplomatici di genere femminile in assoluto.
+2) Paesi con più diplomatici di genere femminile per anno e in assoluto.
+	A) Regioni geografiche con più diplomatici di genere femminile in assoluto.
 
-3) Conteggio dei titoli per tipo e (12)per genere.
-	11) Conteggio dei titoli per tipo negli anni.
-	-)Conteggio di ogni titolo per genere maschile.
-	-)Conteggio di ogni titolo per genere femminile. */
+3) Conteggio dei titoli per tipo e per genere.
+	A)Conteggio di ogni titolo per genere. */
 -------------------------------------------------------------------------------------------------------------------------------------------------
 /* Ho progettato la vista vw_unifiedCountries per raggruppare i paesi esistenti e datati sotto un'unica denominazione, 
 rappresentando il nome attuale e definitivo di ciascun paese. 
@@ -236,7 +233,171 @@ FROM femaleDip_CTE
 
 ---
 
+-- 2 pt1) Paesi con più diplomatici femminili per anno.
 
+/* Nella CTE femDip_count_CTE, si calcola il numero di diplomatici femminili 
+per ogni anno e paese, utilizzando l'alias femDip_count per questa misura.
+Impiegando la funzione finestra DENSE_RANK(), viene assegnata un'etichetta 
+di ordinamento basata su questo conteggio, classificando le combinazioni 
+anno-paese in base al numero più alto di diplomatici femminili. 
 
+Nella SELECT si seleziona la prima combinazione anno-paese in base alla 
+classificazione determinata dalla funzione finestra DENSE_RANK(). 
+Tramite la clausola 'WHERE ROW_order = 1' viene assicurato il risultato 
+corrispondente al conteggio più alto di diplomatici femminili.  */
 
+WITH femDip_count_CTE
 
+	AS( SELECT												  Y.year, 
+
+			   VW.unifiedCountries, 
+			   COUNT( CASE 
+						WHEN gender = 1 THEN 1 
+					  END )									   AS femDip_count,
+
+	    DENSE_RANK() 
+			OVER ( PARTITION BY Y.year 
+				   ORDER BY COUNT( CASE 
+									 WHEN gender = 1 THEN 1 
+								   END ) 
+				   DESC )										AS ROW_order
+
+		FROM targetArea AS T
+			LEFT JOIN dbo.years AS Y
+				ON T.yearID = Y.yearID
+			LEFT JOIN sendingCountries AS S
+				ON T.sendingCountryID = S.sendingCountryID
+			LEFT JOIN vw_unifiedCountries AS VW
+				ON S.countryID = VW.countryID
+			LEFT JOIN dbo.diplomats AS D
+				ON T.diplomatID = D.diplomatID
+		GROUP BY Y.year, 
+				 VW.unifiedCountries
+		HAVING COUNT(CASE 
+						WHEN gender = 1 THEN 1 
+					 END) 
+		 > 1)
+
+SELECT year, 
+	   unifiedCountries, 
+	   femDip_count
+FROM femDip_count_CTE
+WHERE ROW_order = 1
+ORDER BY year;
+
+---
+
+-- 2 pt2) Paesi con più diplomatici femminili in assoluto.
+
+/* Utilizzo la clausola TOP 10 WITH TIES in modo che, 
+se dovessero esserci più paesi con lo stesso numero massimo 
+di diplomatici femminili, verranno restituiti tutti questi 
+paesi oltre ai primi 10 (con ordine decrescente). */
+
+SELECT TOP 10 WITH TIES VW.unifiedCountries, 
+	   COUNT(D.gender) AS femDip_count
+FROM targetArea AS T
+	LEFT JOIN dbo.years AS Y 
+		ON T.yearID = Y.yearID
+	LEFT JOIN sendingCountries AS S 
+		ON T.sendingCountryID = S.sendingCountryID
+	LEFT JOIN vw_unifiedCountries AS VW 
+		ON S.countryID = VW.countryID
+	LEFT JOIN dbo.diplomats AS D 
+		ON T.diplomatID = D.diplomatID
+WHERE D.gender = 1
+GROUP BY VW.unifiedCountries
+ORDER BY femDip_count DESC;
+
+-- 2a) Regioni geografiche  con più diplomatici femminili in assoluto.
+
+WITH femDip_regionCount_CTE
+	AS( SELECT R.region, 
+			   COUNT(D.gender) AS unformatted_count
+		FROM dbo.targetArea AS TA
+			LEFT JOIN dbo.sendingCountries AS S 
+				ON TA.sendingCountryID = S.sendingCountryID
+			LEFT JOIN vw_unifiedCountries AS VW 
+				ON S.countryID = VW.countryID
+			LEFT JOIN dbo.regions AS R 
+				ON VW.regionID = R.regionID
+			LEFT JOIN dbo.diplomats AS D 
+				ON TA.diplomatID = D.diplomatID
+			LEFT JOIN dbo.years AS Y 
+				ON TA.yearID = Y.yearID
+		WHERE D.gender = 1
+		GROUP BY R.region)
+SELECT region, 
+	   FORMAT(unformatted_count, '#,0') AS femDip_regionCount
+FROM femDip_regionCount_CTE
+ORDER BY unformatted_count DESC;
+
+---
+
+-- 3)Conteggio dei titoli per tipo (NB. nel conto è compreso il genere NULL ma non title NULL).
+
+/* Essendo i titoli di Ambassador e Chargé d’affaires numericamente 
+i più presenti, ho incluso gli altri nell'etichetta 'other titles'. */
+
+WITH titles_count_CTE
+	AS( SELECT 
+				CASE 
+					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
+					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
+				END AS title,
+				COUNT(TA.diplomatID) AS unformatted_count
+		FROM dbo.targetArea AS TA 
+			LEFT JOIN diplomats AS D 
+				ON TA.diplomatID = D.diplomatID
+			LEFT JOIN dbo.titles AS T 
+				ON D.titleID = T.titleID
+		WHERE T.title IS NOT NULL
+		GROUP BY 
+				CASE 
+					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
+					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
+				END)
+SELECT title, 
+	   FORMAT(unformatted_count, '#,0') AS titles_count
+FROM titles_count_CTE
+ORDER BY unformatted_count ASC;
+
+-- 3a)Conteggio di ogni titolo per genere (NB. nel conto non è compreso il genere  e il title NULL).
+
+/* Ho ripetuto poi lo stesso codice, aggiungendo un’altra clausola CASE WHEN, 
+nella SELECT e nella GROUP BY, per suddividere il conteggio dei titoli per genere. */
+
+WITH titles_count_CTE
+	AS( SELECT 
+				CASE 
+					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
+					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
+				END AS title,
+				CASE
+					WHEN D.gender = 0 THEN 'Male'
+					WHEN D.gender = 1 THEN 'Female'
+				END AS gender,
+				COUNT(TA.diplomatID) AS unformatted_count
+		FROM dbo.targetArea AS TA 
+			LEFT JOIN diplomats AS D 
+				ON TA.diplomatID = D.diplomatID
+			LEFT JOIN dbo.titles AS T 
+				ON D.titleID = T.titleID
+		WHERE T.title IS NOT NULL 
+						 AND D.gender IS NOT NULL
+		GROUP BY 
+				CASE 
+					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
+					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
+				END,
+				CASE
+					WHEN D.gender = 0 THEN 'Male'
+					WHEN D.gender = 1 THEN 'Female'
+				END )
+SELECT title, 
+	   gender,
+	   FORMAT(unformatted_count, '#,0') AS titles_count
+FROM titles_count_CTE
+ORDER BY unformatted_count DESC,
+		 gender ASC;
+-------------------------------------------------------------------------------------------------------------------------------------------------
