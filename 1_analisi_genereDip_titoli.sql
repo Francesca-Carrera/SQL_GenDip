@@ -154,12 +154,15 @@ Nella SELECT finale viene visualizzato il maggior incremento percentuale di dipl
 WITH maleDiff_CTE 
 	AS ( SELECT year, 
 				maleDiplomats,
+
 				LAG(maleDiplomats) 
 					OVER (
 						ORDER BY Year)				   AS male_prevYearCount,
+
 				maleDiplomats - LAG(maleDiplomats) 
 									OVER (
 										ORDER BY Year) AS male_diff
+
 		 FROM VW_diplomatsByGender
 ),
 maleDiff_pct_CTE 
