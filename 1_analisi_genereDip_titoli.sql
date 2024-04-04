@@ -362,42 +362,26 @@ SELECT title,
 FROM titles_count_CTE
 ORDER BY unformatted_count ASC;
 
--- 3a)Conteggio di ogni titolo per genere (NB. nel conto non è compreso il genere  e il title NULL).
+-- 3a)Conteggio di ogni titolo per genere (NB. nel conto non è compreso il title NULL).
 
-/* Ho ripetuto poi lo stesso codice, aggiungendo un’altra clausola CASE WHEN, 
-nella SELECT e nella GROUP BY, per suddividere il conteggio dei titoli per genere. */
-
-WITH titles_count_CTE
-	AS( SELECT 
-				CASE 
-					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
-					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
-				END AS title,
-				CASE
-					WHEN D.gender = 0 THEN 'Male'
-					WHEN D.gender = 1 THEN 'Female'
-				END AS gender,
-				COUNT(TA.diplomatID) AS unformatted_count
-		FROM dbo.targetArea AS TA 
-			LEFT JOIN diplomats AS D 
-				ON TA.diplomatID = D.diplomatID
-			LEFT JOIN dbo.titles AS T 
-				ON D.titleID = T.titleID
-		WHERE T.title IS NOT NULL 
-						 AND D.gender IS NOT NULL
-		GROUP BY 
-				CASE 
-					WHEN T.title NOT IN ('Ambassador', 'Chargé d’affaires') THEN 'other titles'
-					WHEN T.title IN ('Ambassador', 'Chargé d’affaires') THEN T.title
-				END,
-				CASE
-					WHEN D.gender = 0 THEN 'Male'
-					WHEN D.gender = 1 THEN 'Female'
-				END )
-SELECT title, 
-	   gender,
-	   FORMAT(unformatted_count, '#,0') AS titles_count
-FROM titles_count_CTE
-ORDER BY unformatted_count DESC,
+SELECT T.title, 
+       CASE 
+           WHEN D.gender = 0 THEN 'male'
+           WHEN D.gender = 1 THEN 'female'
+       END AS gender,
+       FORMAT(COUNT(D.gender), '#,0') AS titles_count
+FROM dbo.targetArea AS TA 
+	LEFT JOIN diplomats AS D 
+		ON TA.diplomatID = D.diplomatID
+	LEFT JOIN dbo.titles AS T 
+		ON D.titleID = T.titleID
+WHERE D.gender IS NOT NULL 
+				  AND T.title IS NOT NULL
+GROUP BY T.title, 
+         CASE 
+             WHEN D.gender = 0 THEN 'male'
+             WHEN D.gender = 1 THEN 'female'
+         END
+ORDER BY T.title ASC,
 		 gender ASC;
 -------------------------------------------------------------------------------------------------------------------------------------------------
