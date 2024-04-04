@@ -1,10 +1,10 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
-/* ANALISI DEI DATI 1/3 - Focus: genere e titoli dei diplomatici.
+/* ANALISI DEI DATI 1/3 - Primo Focus: genere e titoli dei diplomatici.
 
 1) Conteggio totale e annuale di diplomatici per genere.
 	A) Maggior numero di diplomatici per genere e in quale anno.
 	B) Rapporto di crescita di diplomatici, per genere, del 2021 rispetto al 1968.
-	D) Crescita percentuale maggiore di diplomatici di genere maschile.
+	C) Crescita percentuale maggiore di diplomatici di genere maschile.
 
 2) Paesi con più diplomatici di genere femminile per anno e (8) in assoluto.
 	A)Paese con più diplomatici di genere femminile in un singolo anno.
@@ -119,7 +119,7 @@ WITH femaleDiplomats_CTE
 		ORDER BY femaleDiplomats DESC)
 
 , maleDiplomats_CTE 
-	AS (SELECT TOP 1 year, 
+  AS (SELECT TOP 1 year, 
 	    FORMAT(maleDiplomats, '#,0') AS maleDip_MAX
 		FROM VW_diplomatsByGender
 		ORDER BY maleDiplomats DESC)
@@ -152,8 +152,7 @@ Nello specifico:
 - 'FORMAT(..., '0.00') + '%' AS maleDiff_pct' per formattare il risultato come stringa, aggiungendo il simbolo percentuale 
    alla fine, creando così la rappresentazione della variazione percentuale. 
    
-Nella SELECT finale viene visualizzato il maggior incremento percentuale 
-di diplomatici, appartenenti al genere maschile, con l'anno di riferimento.*/
+Nella SELECT finale viene visualizzato il maggior incremento percentuale di diplomatici maschili con l'anno di riferimento.*/
 
 WITH maleDiff_CTE 
 	AS ( SELECT year, 
