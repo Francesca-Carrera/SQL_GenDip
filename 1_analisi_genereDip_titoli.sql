@@ -2,16 +2,15 @@
 /* ANALISI DEI DATI 1/3 - Focus: genere e titoli dei diplomatici.
 
 1) Conteggio totale e annuale di diplomatici per genere.
-	A) Maggior numero di diplomatici di genere femminile e in quale anno.
-	B) Maggior numero di diplomatici di genere maschile e in quale anno.
-	C) Rapporto di crescita di diplomatici di genere maschile e femminile del 2021 rispetto al 1968.
+	A) Maggior numero di diplomatici per genere e in quale anno.
+	B) Rapporto di crescita di diplomatici, per genere, del 2021 rispetto al 1968.
 	D) Crescita percentuale maggiore di diplomatici di genere maschile.
 
-6) Paesi con più diplomatici di genere femminile per anno e (8) in assoluto.
-	7)Paese con più diplomatici di genere femminile in un singolo anno.
-	9) Continenti con più diplomatici di genere femminile in assoluto.
+2) Paesi con più diplomatici di genere femminile per anno e (8) in assoluto.
+	A)Paese con più diplomatici di genere femminile in un singolo anno.
+	B) Continenti con più diplomatici di genere femminile in assoluto.
 
-10) Conteggio dei titoli per tipo e (12)per genere.
+3) Conteggio dei titoli per tipo e (12)per genere.
 	11) Conteggio dei titoli per tipo negli anni.
 	-)Conteggio di ogni titolo per genere maschile.
 	-)Conteggio di ogni titolo per genere femminile. */
@@ -112,23 +111,29 @@ CREATE VIEW VW_diplomatsByGender AS
 
 ---
 
--- 1a) Maggior numero di diplomatici di genere femminile e in quale anno.
-SELECT TOP 1 year, 
-	   FORMAT(femaleDiplomats, '#,0') AS femDip_MAX
-FROM VW_diplomatsByGender
-ORDER BY femaleDiplomats DESC;
--- Year: 2021 - femaleDip_MAX: 3.482
+-- 1a) Maggior numero di diplomatici per genere e in quale anno.
+WITH femaleDiplomats_CTE
+	 AS (SELECT TOP 1 year, 
+	    FORMAT(femaleDiplomats, '#,0') AS femDip_MAX
+		FROM VW_diplomatsByGender
+		ORDER BY femaleDiplomats DESC)
 
--- 1b) Maggior numero di diplomatici di genere maschile e in quale anno.
-SELECT TOP 1 year, 
-	   FORMAT(maleDiplomats, '#,0') AS maleDip_MAX
-FROM VW_diplomatsByGender
-ORDER BY maleDiplomats DESC;
+, maleDiplomats_CTE 
+	AS (SELECT TOP 1 year, 
+	    FORMAT(maleDiplomats, '#,0') AS maleDip_MAX
+		FROM VW_diplomatsByGender
+		ORDER BY maleDiplomats DESC)
+
+SELECT FD.year, FD.femDip_MAX, 
+	   MD.maleDip_MAX, MD.year 
+FROM femaleDiplomats_CTE AS FD
+	 CROSS JOIN maleDiplomats_CTE  AS MD; 
+-- Year: 2021 - femaleDip_MAX: 3.482
 -- Year: 2014 - maleDip_MAX: 12.224
 
 ---
 
--- 1c) Crescita percentuale maggiore di diplomatici di genere maschile.
+-- 1b) Crescita percentuale maggiore di diplomatici di genere maschile.
 
 /* Nella CTE maleDiff_CTE viene calcolato il numero di diplomatici di genere maschile per ogni anno 
 e la differenza tra il numero di diplomatici maschili di un determinato anno rispetto a quello precedente.
@@ -175,7 +180,7 @@ ORDER BY maleDiff_pct DESC;
 
 ---
 
--- 1d) Rapporto di crescita di diplomatici di genere maschile e femminile del 2021 rispetto al 1968.
+-- 1c) Rapporto di crescita di diplomatici, per genere, del 2021 rispetto al 1968.
 
 /* Nella CTE femaleDip_CTE vengono calcolate le somme dei diplomatici di genere femminili per due anni specifici, il 2021 e il 1968.
   Nella CTE maleDip_CTE vengono calcolate le somme dei diplomatici di genere maschile per due anni specifici, il 2021 e il 1968.
@@ -226,8 +231,8 @@ SELECT FORMAT(ROUND  ( CONVERT(DECIMAL(18,2), femaleDiplomats_2021 ) /
 					   NULLIF( CONVERT(DECIMAL(18,2), maleDiplomats_1968 ), 0 )
 			  , 2)
 	   , '0.00')																AS maleDip_growthRatio
-FROM femaleDip_CTE,
-	 maleDip_CTE;
+FROM femaleDip_CTE
+	 CROSS JOIN maleDip_CTE;
 -- femaleDip_growthRatio: 120.07 -- maleDip_growthRatio: 3.82
 
 ---
