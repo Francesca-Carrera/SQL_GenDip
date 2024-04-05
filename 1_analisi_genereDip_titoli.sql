@@ -9,7 +9,7 @@
 2) Paesi con più diplomatici di genere femminile per anno e in assoluto.
 	A) Regioni geografiche con più diplomatici di genere femminile in assoluto.
 
-3) Conteggio dei titoli per tipo e per genere.
+3) Conteggio dei titoli per categoria.
 	A)Conteggio di ogni titolo per genere. */
 -------------------------------------------------------------------------------------------------------------------------------------------------
 /* Ho progettato la vista vw_unifiedCountries per raggruppare i paesi esistenti e datati sotto un'unica denominazione, 
@@ -337,7 +337,7 @@ ORDER BY unformatted_count DESC;
 
 ---
 
--- 3)Conteggio dei titoli per tipo (NB. nel conto è compreso il genere NULL ma non title NULL).
+-- 3)Conteggio dei titoli per categoria (NB. nel conto è compreso il genere NULL ma non title NULL).
 
 /* Essendo i titoli di Ambassador e Chargé d’affaires numericamente 
 i più presenti, ho incluso gli altri nell'etichetta 'other titles'. */

@@ -1,15 +1,17 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
-/* ANALISI DEI DATI 2/3 - Secondo Focus: membri del Parlamento e politica estera femminista.
+/* ANALISI DEI DATI 2/3 - Secondo Focus: membri del Parlamento di genere femminile e politica estera femminista.
 
-4) Media percentuale annuale dei membri di genere femminile, appartenenti alla Camera Bassa.
-	A) Crescita media annuale.
+4) Media percentuale annuale dei legislatori femminili della Camera Bassa.
+	A) Crescita media annuale dei legislatori femminili della Camera Bassa.
 
 5) I paesi con la percentuale annuale maggiore di legislatori femminili.
 	A) TOP 10 paesi con media percentuale più alta in assoluto.
-	B) La media percentuale delle regioni geografiche. */
+	B) La media percentuale delle regioni geografiche. 
+	
+6) Paesi d'invio aderenti ad una politica estera femminista.*/
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
--- 4) Media percentuale annuale dei membri di genere femminile, appartenenti alla Camera Bassa.
+-- 4) Media percentuale annuale dei legislatori femminili della Camera Bassa.
 
 SELECT year, 
 	   FORMAT(ROUND( AVG( COALESCE(FL.femaleLegislatorPercentage, 0))
@@ -30,12 +32,16 @@ ORDER BY year ASC;
 - ROUND(AVG(COALESCE(FL.femaleLegislatorPercentage, 0)),2) : 4.960000
 - FORMAT(ROUND(AVG(COALESCE(FL.femaleLegislatorPercentage, 0)),2), '0.00') : 4,96 */
 
--- 4a) Crescita media annuale.
+---
+
+-- 4a) Crescita media annuale dei legislatori femminili della Camera Bassa.
 
 /* Nella CTE femPct_avg_CTE visualizzo la media percentuale annuale 
-dei membri di genere femminile, appartenenti alla Camera Bassa.
-Nella CTE avgPct_CTE viene calcolata la media percentuale 
-di crescita annuale delle percentuali di legislatori femminili. 
+dei legislatori femminili, appartenenti alla Camera Bassa.
+
+Nella CTE avgPct_CTE viene espressa la crescita annua media 
+percentuale della presenza di legislatori femminili. 
+
 Nello specifico:
 - con la funzione finestra LAG mostro la media percentuale dell'anno precedente per ogni riga.
 - con il codice 'femPct_avg - LAG(femPct_avg) OVER (ORDER BY year) AS annual_avgPct_growth'
@@ -75,7 +81,7 @@ avgPct_CTE
 SELECT FORMAT(ROUND( SUM(COALESCE(annual_avgPct_growth, 0)) / (COUNT(year)-1)
 			  , 2)
 	   , '0.00') AS avgPct_growth
-FROM avgPct_CTE
+FROM avgPct_CTE;
 -- avgPct_growth: 2.36
 
 ---
@@ -165,4 +171,20 @@ FROM
 GROUP BY R.region
 ORDER BY femPct ASC;
 
+---
+-- 6) Paesi d'invio aderenti ad una politica estera femminista.
+SELECT Y.year, 
+	   unifiedCountries
+FROM dbo.targetArea AS TA
+	LEFT JOIN dbo.sendingCountries AS SC 
+		ON TA.sendingCountryID = SC.sendingCountryID
+	LEFT JOIN vw_unifiedCountries AS VW 
+		ON SC.countryID = VW.countryID
+	LEFT JOIN dbo.years AS Y 
+		ON TA.yearID = Y.yearID
+WHERE SC.feministForeignPolicy = 1
+GROUP BY Y.year, 
+		 VW.unifiedCountries, 
+		 SC.feministForeignPolicy;
+---------------------------------------------------------------------------------------------------------------------------------------------
 
