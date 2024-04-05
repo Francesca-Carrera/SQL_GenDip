@@ -717,8 +717,8 @@ WITH unupdatedCountries_CTE
 SELECT C.countryID2, 
 	   C.alpcode, 
 	   C.country, 
-	   C.regionID AS	  'wrong regionID',
-	   UC.updatedRegionID 'correct regionID'
+	   C.regionID		  AS 'wrong regionID',
+	   UC.updatedRegionID AS 'correct regionID'
 FROM dbo.countries AS C
 	 INNER JOIN unupdatedCountries_CTE AS CTE
 			ON C.country = CTE.country 
