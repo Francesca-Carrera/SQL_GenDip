@@ -1,0 +1,250 @@
+﻿column1;column2;column3
+ABW;Aruba;6
+AFG;Afghanistan;4
+AGO;Angola;2
+AIA;Anguilla;6
+ALA;Åland Islands;5
+ALB;Albania;5
+AND;Andorra;5
+ARE;United Arab Emirates;4
+ARG;Argentina;8
+ARM;Armenia;4
+ASM;American Samoa;7
+ATA;Antarctica;3
+ATF;French Southern Territories;3
+ATG;Antigua and Barbuda;6
+AUS;Australia;7
+AUT;Austria;5
+AZE;Azerbaijan;4
+BDI;Burundi;2
+BEL;Belgium;5
+BEN;Benin;2
+BES;Bonaire, Sint Eustatius and Saba;6
+BFA;Burkina Faso;2
+BGD;Bangladesh;4
+BGR;Bulgaria;5
+BHR;Bahrain;4
+BHS;Bahamas;6
+BIH;Bosnia and Herzegovina;5
+BLM;Saint Barthélemy;6
+BLR;Belarus;5
+BLZ;Belize;6
+BMU;Bermuda;6
+BOL;Bolivia, Plurinational State of;8
+BRA;Brazil;8
+BRB;Barbados;6
+BRN;Brunei Darussalam;4
+BTN;Bhutan;4
+BVT;Bouvet Island;3
+BWA;Botswana;2
+CAF;Central African Republic;2
+CAN;Canada;6
+CCK;Cocos (Keeling) Islands;4
+CHE;Switzerland;5
+CHL;Chile;8
+CHN;China;4
+CIV;Côte d'Ivoire;2
+CMR;Cameroon;2
+COD;Congo, Democratic Republic of the;2
+COG;Congo;2
+COK;Cook Islands;7
+COL;Colombia;8
+COM;Comoros;2
+CPV;Cabo Verde;2
+CRI;Costa Rica;6
+CUB;Cuba;6
+CUW;Curaçao;6
+CXR;Christmas Island;4
+CYM;Cayman Islands;6
+CYP;Cyprus;5
+CZE;Czechia;5
+DEU;Germany;5
+DJI;Djibouti;2
+DMA;Dominica;6
+DNK;Denmark;5
+DOM;Dominican Republic;6
+DZA;Algeria;2
+ECU;Ecuador;8
+EGY;Egypt;2
+ERI;Eritrea;2
+ESH;Western Sahara;2
+ESP;Spain;5
+EST;Estonia;5
+ETH;Ethiopia;2
+FIN;Finland;5
+FJI;Fiji;7
+FLK;Falkland Islands;8
+FRA;France;5
+FRO;Faroe Islands;5
+FSM;Micronesia, Federated States of;7
+GAB;Gabon;2
+GBR;United Kingdom of Great Britain and Northern Ireland;5
+GEO;Georgia;4
+GGY;Guernsey;5
+GHA;Ghana;2
+GIB;Gibraltar;5
+GIN;Guinea;2
+GLP;Guadeloupe;6
+GMB;Gambia;2
+GNB;Guinea-Bissau;2
+GNQ;Equatorial Guinea;2
+GRC;Greece;5
+GRD;Grenada;6
+GRL;Greenland;6
+GTM;Guatemala;6
+GUF;French Guiana;8
+GUM;Guam;7
+GUY;Guyana;8
+HKG;Hong Kong;4
+HMD;Heard Island and McDonald Islands;7
+HND;Honduras;6
+HRV;Croatia;5
+HTI;Haiti;6
+HUN;Hungary;5
+IDN;Indonesia;4
+IMN;Isle of Man;5
+IND;India;4
+IOT;British Indian Ocean Territory;4
+IRL;Ireland;5
+IRN;Iran, Islamic Republic of;4
+IRQ;Iraq;4
+ISL;Iceland;5
+ISR;Israel;4
+ITA;Italy;5
+JAM;Jamaica;6
+JEY;Jersey;5
+JOR;Jordan;4
+JPN;Japan;4
+KAZ;Kazakhstan;4
+KEN;Kenya;2
+KGZ;Kyrgyzstan;4
+KHM;Cambodia;4
+KIR;Kiribati;7
+KNA;Saint Kitts and Nevis;6
+KOR;Korea, Republic of;4
+KWT;Kuwait;4
+LAO;Lao People's Democratic Republic;4
+LBN;Lebanon;4
+LBR;Liberia;2
+LBY;Libya;2
+LCA;Saint Lucia;6
+LIE;Liechtenstein;5
+LKA;Sri Lanka;4
+LSO;Lesotho;2
+LTU;Lithuania;5
+LUX;Luxembourg;5
+LVA;Latvia;5
+MAC;Macao;4
+MAF;Saint Martin;6
+MAR;Morocco;2
+MCO;Monaco;5
+MDA;Moldova, Republic of;5
+MDG;Madagascar;2
+MDV;Maldives;4
+MEX;Mexico;6
+MHL;Marshall Islands;7
+MKD;North Macedonia;5
+MLI;Mali;2
+MLT;Malta;5
+MMR;Myanmar;4
+MNE;Montenegro;5
+MNG;Mongolia;4
+MNP;Northern Mariana Islands;7
+MOZ;Mozambique;2
+MRT;Mauritania;2
+MSR;Montserrat;6
+MTQ;Martinique;6
+MUS;Mauritius;2
+MWI;Malawi;2
+MYS;Malaysia;4
+MYT;Mayotte;2
+NAM;Namibia;2
+NCL;New Caledonia;7
+NER;Niger;2
+NFK;Norfolk Island;7
+NGA;Nigeria;2
+NIC;Nicaragua;6
+NIU;Niue;7
+NLD;Netherlands;5
+NOR;Norway;5
+NPL;Nepal;4
+NRU;Nauru;7
+NZL;New Zealand;7
+OMN;Oman;4
+PAK;Pakistan;4
+PAN;Panama;6
+PCN;Pitcairn;7
+PER;Peru;8
+PHL;Philippines;4
+PLW;Palau;7
+PNG;Papua New Guinea;7
+POL;Poland;5
+PRI;Puerto Rico;6
+PRK;Korea, Democratic People's Republic of;4
+PRT;Portugal;5
+PRY;Paraguay;8
+PSE;Palestine, State of;4
+PYF;French Polynesia;7
+QAT;Qatar;4
+REU;Réunion;2
+ROU;Romania;5
+RUS;Russian Federation;5
+RWA;Rwanda;2
+SAU;Saudi Arabia;4
+SDN;Sudan;2
+SEN;Senegal;2
+SGP;Singapore;4
+SGS;South Georgia and the South Sandwich Islands;3
+SHN;Saint Helena, Ascension and Tristan da Cunha;2
+SJM;Svalbard and Jan Mayen;5
+SLB;Solomon Islands;7
+SLE;Sierra Leone;2
+SLV;El Salvador;6
+SMR;San Marino;5
+SOM;Somalia;2
+SPM;Saint Pierre and Miquelon;6
+SRB;Serbia;5
+SSD;South Sudan;2
+STP;Sao Tome and Principe;2
+SUR;Suriname;8
+SVK;Slovakia;5
+SVN;Slovenia;5
+SWE;Sweden;5
+SWZ;Eswatini;2
+SXM;Sint Maarten;6
+SYC;Seychelles;2
+SYR;Syrian Arab Republic;4
+TCA;Turks and Caicos Islands;6
+TCD;Chad;2
+TGO;Togo;2
+THA;Thailand;4
+TJK;Tajikistan;4
+TKL;Tokelau;7
+TKM;Turkmenistan;4
+TLS;Timor-Leste;4
+TON;Tonga;7
+TTO;Trinidad and Tobago;6
+TUN;Tunisia;2
+TUR;Türkiye;4
+TUV;Tuvalu;7
+TWN;Taiwan, Province of China;4
+TZA;Tanzania, United Republic of;2
+UGA;Uganda;2
+UKR;Ukraine;5
+UMI;United States Minor Outlying Islands;6
+URY;Uruguay;8
+USA;United States of America;6
+UZB;Uzbekistan;4
+VAT;Holy See;5
+VCT;Saint Vincent and the Grenadines;6
+VEN;Venezuela, Bolivarian Republic of;8
+VGB;British Virgin Islands;6
+VIR;United States Virgin Islands;6
+VNM;Viet Nam;4
+VUT;Vanuatu;7
+WLF;Wallis and Futuna;7
+WSM;Samoa;7
+YEM;Yemen;4
+ZAF;South Africa;2
+ZMB;Zambia;2
+ZWE;Zimbabwe;2
